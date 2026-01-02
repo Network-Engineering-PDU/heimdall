@@ -1,0 +1,34 @@
+#!/bin/sh
+
+PID_FILE="/var/run/ssh_tunnel.pid"
+
+case "$1" in
+start)
+    if [ -f $PID_FILE ]; then
+        echo "Tunnel already exists"
+    else
+        echo "Dig ssh tunnel..."
+	start-stop-daemon --start --make-pidfile --pidfile $PID_FILE --background \
+		--startas /bin/bash -- -c "exec /usr/bin/autossh.sh > /var/log/ssh_tunnel.log 2>&1"
+    fi
+;;
+
+stop)
+    if [ -f $PID_FILE ]; then
+		echo "Break down ssh tunnel..."
+		start-stop-daemon --stop --pidfile=$PID_FILE --retry 10 --signal SIGINT
+		rm $PID_FILE
+	else
+		echo "Tunnel already stop"
+	fi
+;;
+
+restart)
+    $0 stop
+    $0 start
+;;
+
+*)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac

@@ -1,0 +1,14 @@
+PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] $ '
+
+alias ls='ls --color=auto'
+alias swu='swupdate -H imx7-var-som:1.0 -i'
+alias remount='mount -o remount,rw $(cat /proc/cmdline | sed "s/^.*root=\(\S*\).*$/\1/")'
+alias ttlogc='ttlog | sed -e "s/\(.*DEBUG.*\)/\x1B[36m\1\x1B[39m/" -e "s/\(.*WARNING.*\)/\x1B[33m\1\x1B[39m/" -e "s/\(.*ERROR.*\)/\x1B[31m\1\x1B[39m/"'
+alias ttnelogc='ttnelog | sed -e "s/\(.*DEBUG.*\)/\x1B[36m\1\x1B[39m/" -e "s/\(.*WARNING.*\)/\x1B[33m\1\x1B[39m/" -e "s/\(.*ERROR.*\)/\x1B[31m\1\x1B[39m/"'
+
+function update_bootloader {
+	dd if="$1" of=/dev/mmcblk2 bs=1K seek=69; sync
+}
+
+export PIP_ROOT_USER_ACTION=ignore
+
